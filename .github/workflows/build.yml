@@ -1,4 +1,4 @@
-name: Build Play4Earnn APK
+ name: Build Play4Earnn APK
 
 on:
   workflow_dispatch:
@@ -23,7 +23,6 @@ jobs:
 
       - name: Create Fresh Flutter App
         run: |
-          # Ek proper sub-folder me app create karenge taaki config error na aaye
           flutter create --org com.play4earnn play_app
           mkdir -p play_app/android/app
           echo '${{ secrets.FIREBASE_JSON }}' > play_app/android/app/google-services.json
@@ -43,8 +42,4 @@ jobs:
         with:
           name: play4earnn-app-release
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
-        uses: actions/upload-artifact@v4
-        with:
-          name: play4earnn-app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
           
