@@ -23,17 +23,26 @@ jobs:
 
       - name: Create Fresh Flutter App
         run: |
-          flutter create --org com.play4earnn . --force
-          mkdir -p android/app
-          echo '${{ secrets.FIREBASE_JSON }}' > android/app/google-services.json
+          # Ek proper sub-folder me app create karenge taaki config error na aaye
+          flutter create --org com.play4earnn play_app
+          mkdir -p play_app/android/app
+          echo '${{ secrets.FIREBASE_JSON }}' > play_app/android/app/google-services.json
 
       - name: Get Dependencies
-        run: flutter pub get
+        run: |
+          cd play_app
+          flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: |
+          cd play_app
+          flutter build apk --release
 
       - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: play4earnn-app-release
+          path: play_app/build/app/outputs/flutter-apk/app-release.apk
         uses: actions/upload-artifact@v4
         with:
           name: play4earnn-app-release
