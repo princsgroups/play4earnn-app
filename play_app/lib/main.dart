@@ -31,7 +31,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-  int _coins = 1842; 
+  int _coins = 1842;
   final int _lifetimeCoins = 3692;
 
   @override
@@ -45,7 +45,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -70,8 +69,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-
-              // Balance Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -137,8 +134,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Daily Check-in Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -169,8 +164,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Ways to Earn Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -179,8 +172,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-
-              // 4 Earning Grids
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -191,8 +182,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   _buildGridCard('Watch & Earn', 'Up to 50 coins / video', Icons.play_circle_fill, const [Color(0xFFE040FB), Color(0xFF00BCD4)], () {}),
                   _buildGridCard('Play Quiz', '5 coins per correct', Icons.psychology, const [Color(0xFFFFB300), Color(0xFFFF6D00)], () {}),
-                  
-                  // Spin Wheel Button
                   _buildGridCard('Spin Wheel', 'Win 1 to 30 coins', Icons.incomplete_circle, const [Color(0xFF9C27B0), Color(0xFFFF5252)], () {
                     Navigator.push(
                       context,
@@ -207,48 +196,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     );
                   }),
-                  
                   _buildGridCard('Refer & Earn', '500 coins per friend', Icons.people, const [Color(0xFFFFB300), Color(0xFFFFAB40)], () {}),
                 ],
               ),
               const SizedBox(height: 16),
-
-              // Leaderboard Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFF6D00)]),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
-                      child: const Icon(Icons.emoji_events, color: Colors.white, size: 28),
-                    ),
-                    const SizedBox(width: 14),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Leaderboard', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                          SizedBox(height: 2),
-                          Text('See top earners and your rank', style: TextStyle(fontSize: 12, color: Colors.white70)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
       ),
-
-      // Bottom Navigation Bar
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -265,7 +220,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             backgroundColor: Colors.white,
             selectedItemColor: Colors.purple,
             unselectedItemColor: Colors.grey,
-            showUnselectedLabels: true,
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
               BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Tasks'),
@@ -325,16 +279,12 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
   late Animation<double> _animation;
   bool _isSpinning = false;
   int _wonValue = 0;
-
   final List<int> _wheelValues = [2, 10, 5, 30, 1, 8, 3, 20];
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 4));
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
   }
 
@@ -346,45 +296,17 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
 
   void _spinWheel() {
     if (_isSpinning) return;
-
-    setState(() {
-      _isSpinning = true;
-    });
-
-    int luckyRoll = Random().nextInt(100); 
-    int targetedIndex = 0;
-
-    if (luckyRoll < 30) {
-      targetedIndex = _wheelValues.indexOf(2);   
-    } else if (luckyRoll < 55) {
-      targetedIndex = _wheelValues.indexOf(3);   
-    } else if (luckyRoll < 75) {
-      targetedIndex = _wheelValues.indexOf(5);   
-    } else if (luckyRoll < 90) {
-      targetedIndex = _wheelValues.indexOf(1);   
-    } else if (luckyRoll < 96) {
-      targetedIndex = _wheelValues.indexOf(10);  
-    } else if (luckyRoll < 99) {
-      targetedIndex = _wheelValues.indexOf(20);  
-    } else {
-      targetedIndex = _wheelValues.indexOf(30);  
-    }
-
+    setState(() => _isSpinning = true);
+    int luckyRoll = Random().nextInt(100);
+    int targetedIndex = luckyRoll < 30 ? 0 : luckyRoll < 55 ? 2 : luckyRoll < 75 ? 4 : luckyRoll < 90 ? 6 : luckyRoll < 96 ? 1 : luckyRoll < 99 ? 7 : 3;
     _wonValue = _wheelValues[targetedIndex];
-
     double sectorAngle = (2 * pi) / _wheelValues.length;
     double targetAngle = (2 * pi * 4) + (sectorAngle * targetedIndex);
-
-    _animation = Tween<double>(begin: 0, end: targetAngle).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
-
+    _animation = Tween<double>(begin: 0, end: targetAngle).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward(from: 0).then((_) {
       widget.onCoinsWon(_wonValue);
       _showRewardDialog(_wonValue);
-      setState(() {
-        _isSpinning = false;
-      });
+      setState(() => _isSpinning = false);
     });
   }
 
@@ -400,18 +322,14 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
           children: [
             const Icon(Icons.monetization_on, color: Colors.amber, size: 60),
             const SizedBox(height: 12),
-            Text(
-              'Aapne jeete hain $coins Coins!',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
+            Text('Aapne jeete hain $coins Coins!', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context); 
+              Navigator.pop(context);
             },
             child: const Text('OK', style: TextStyle(fontSize: 16, color: Colors.purple, fontWeight: FontWeight.bold)),
           ),
@@ -423,81 +341,84 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lucky Spin Wheel', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Lucky Spin Wheel', style: TextStyle(fontWeight: FontWeight.bold)), centerTitle: true),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text('Apna Luck Azmaiye! 🎡', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                child: Text('1 se 30 tak coins milenge, chalo ghumao!', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
-              ),
+              const Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8), child: Text('1 se 30 tak coins milenge, chalo ghumao!', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
               const SizedBox(height: 30),
-
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Sahi Stack Order: Indicator background ke upar automatic layer ho jayega bina zIndex ke
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: AnimatedBuilder(
                       animation: _animation,
-                      builder: (context, child) {
-                        return Transform.rotate(
-                          angle: _animation.value,
-                          child: child,
-                        );
-                      },
+                      builder: (context, child) => Transform.rotate(angle: _animation.value, child: child),
                       child: Container(
                         width: 280,
                         height: 280,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)],
-                        ),
-                        child: CustomPaint(
-                          painter: WheelPainter(_wheelValues),
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)]),
+                        child: CustomPaint(painter: WheelPainter(_wheelValues)),
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 0,
-                    child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red),
-                  ),
+                  Positioned(top: 0, child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red)),
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: Container(
                       width: 45,
                       height: 45,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
-                      ),
+                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)]),
                       child: const Icon(Icons.star, color: Colors.amber, size: 26),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 50),
-
               GestureDetector(
                 onTap: _spinWheel,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: _isSpinning 
-                          ? [Colors.grey, Colors.grey.shade400] 
-                          : [const Color(0xFF9C27B0), const Color(0xFFFF5252)],
-                    ),
+                    gradient: LinearGradient(colors: _isSpinning ? [Colors.grey, Colors.grey.shade400] : [const Color(0xFF9C27B0), const Color(0xFFFF5252)]),
                     borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF9C27B0)
+                    boxShadow: [BoxShadow(color: const Color(0xFF9C27B0), blurRadius: 10, offset: const Offset(0, 4))],
+                  ),
+                  child: const Center(child: Text('SPIN', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WheelPainter extends CustomPainter {
+  final List<int> values;
+  WheelPainter(this.values);
+  @override
+  void paint(Canvas canvas, Size size) {
+    double center = size.width / 2;
+    double radius = center;
+    Paint paint = Paint()..style = PaintingStyle.fill;
+    double angle = (2 * pi) / values.length;
+    for (int i = 0; i < values.length; i++) {
+      paint.color = (i % 2 == 0) ? const Color(0xFF9C27B0) : const Color(0xFFFF5252);
+      canvas.drawArc(Rect.fromCircle(center: Offset(center, center), radius: radius), i * angle, angle, true, paint);
+      TextPainter textPainter = TextPainter(text: TextSpan(text: values[i].toString(), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)), textDirection: TextDirection.ltr);
+      textPainter.layout();
+      double textAngle = i * angle + angle / 2;
+      double x = center + (radius / 1.5) * cos(textAngle);
+      double y = center + (radius / 1.5) * sin(textAngle);
+      textPainter.paint(canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
+    }
+  }
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
