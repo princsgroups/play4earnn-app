@@ -28,7 +28,7 @@ jobs:
           if [ -d "play_app" ]; then
             cd play_app
           fi
-          flutter pub get
+          flutter pub get --legacy-peer-deps
 
       - name: Build APK Release
         run: |
@@ -44,4 +44,4 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             play_app/build/app/outputs/flutter-apk/app-release.apk
-
+            
