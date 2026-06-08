@@ -44,4 +44,4 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             play_app/build/app/outputs/flutter-apk/app-release.apk
-            
+
