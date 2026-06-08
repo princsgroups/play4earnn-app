@@ -1,56 +1,39 @@
-conname: Generate and Build Play4Earnn App
+name: Flutter APK Build
 
 on:
   workflow_dispatch:
 
-# GitHub ke naye platform update ko force karne ke liye global variables
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
-
-permissions:
-  contents: write
-
 jobs:
-  setup-and-build:
+  build:
     runs-on: ubuntu-latest
     steps:
-      # 1. Standard Code Checkout
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. OpenJDK 17 manually setup karna bina setup-java plugin ke takki Node crash na ho
       - name: Set up Java 17
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk
-          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> $GITHUB_PATH
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-      # 3. Flutter SDK ko seedhe stable channel se pull karna (Bina plugin dependencies ke)
       - name: Set up Flutter
-        run: |
-          git clone https://github.com/flutter/flutter.git -b stable --depth 1 $HOME/flutter
-          echo "$HOME/flutter/bin" >> $GITHUB_PATH
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-      # 4. Project folder me jaakar dependencies fetch karna
-      - name: Get Dependencies
+      - name: Install Dependencies
         run: |
-          export PATH="$HOME/flutter/bin:$PATH"
           cd play_app
           flutter pub get
 
-      # 5. Production APK Build karna
-      - name: Build APK Release
+      - name: Build APK
         run: |
-          export PATH="$HOME/flutter/bin:$PATH"
           cd play_app
           flutter build apk --release
 
-      # 6. Sahi action version se artifact upload karna
-      - name: Upload APK Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: play4earnn-app-release
+          name: release-apk
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
-          
+
