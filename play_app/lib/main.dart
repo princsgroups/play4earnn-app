@@ -31,7 +31,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-  int _coins = 1842; // Aapke current coins ke mutabik set kiya hai
+  int _coins = 1842; 
   final int _lifetimeCoins = 3692;
 
   @override
@@ -192,7 +192,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   _buildGridCard('Watch & Earn', 'Up to 50 coins / video', Icons.play_circle_fill, const [Color(0xFFE040FB), Color(0xFF00BCD4)], () {}),
                   _buildGridCard('Play Quiz', '5 coins per correct', Icons.psychology, const [Color(0xFFFFB300), Color(0xFFFF6D00)], () {}),
                   
-                  // Spin Wheel Button Trigger
+                  // Spin Wheel Button
                   _buildGridCard('Spin Wheel', 'Win 1 to 30 coins', Icons.incomplete_circle, const [Color(0xFF9C27B0), Color(0xFFFF5252)], () {
                     Navigator.push(
                       context,
@@ -312,7 +312,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-// Pure Custom Built-In Spin Wheel (No external packages needed!)
+// Fixed Custom Spin Wheel Screen
 class CustomSpinWheelScreen extends StatefulWidget {
   final Function(int) onCoinsWon;
   const CustomSpinWheelScreen({super.key, required this.onCoinsWon});
@@ -327,7 +327,6 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
   bool _isSpinning = false;
   int _wonValue = 0;
 
-  // Wheel values layout
   final List<int> _wheelValues = [2, 10, 5, 30, 1, 8, 3, 20];
 
   @override
@@ -335,7 +334,7 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4), // 4 seconds smooth realistic rotation
+      duration: const Duration(seconds: 4),
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
   }
@@ -353,30 +352,27 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
       _isSpinning = true;
     });
 
-    // Smart Probability Engine:
-    // 1 se 30 tak value milegi lekin zyadatar 10 ke andar hi milegi!
     int luckyRoll = Random().nextInt(100); 
     int targetedIndex = 0;
 
     if (luckyRoll < 30) {
-      targetedIndex = _wheelValues.indexOf(2);   // 30% chance for 2 coins
+      targetedIndex = _wheelValues.indexOf(2);   
     } else if (luckyRoll < 55) {
-      targetedIndex = _wheelValues.indexOf(3);   // 25% chance for 3 coins
+      targetedIndex = _wheelValues.indexOf(3);   
     } else if (luckyRoll < 75) {
-      targetedIndex = _wheelValues.indexOf(5);   // 20% chance for 5 coins
+      targetedIndex = _wheelValues.indexOf(5);   
     } else if (luckyRoll < 90) {
-      targetedIndex = _wheelValues.indexOf(1);   // 15% chance for 1 coin
+      targetedIndex = _wheelValues.indexOf(1);   
     } else if (luckyRoll < 96) {
-      targetedIndex = _wheelValues.indexOf(10);  // 6% chance for 10 coins
+      targetedIndex = _wheelValues.indexOf(10);  
     } else if (luckyRoll < 99) {
-      targetedIndex = _wheelValues.indexOf(20);  // 3% chance for 20 coins
+      targetedIndex = _wheelValues.indexOf(20);  
     } else {
-      targetedIndex = _wheelValues.indexOf(30);  // Only 1% chance for jackpot 30 coins!
+      targetedIndex = _wheelValues.indexOf(30);  
     }
 
     _wonValue = _wheelValues[targetedIndex];
 
-    // Calculate rotation angle matching the sector index
     double sectorAngle = (2 * pi) / _wheelValues.length;
     double targetAngle = (2 * pi * 4) + (sectorAngle * targetedIndex);
 
@@ -399,7 +395,7 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Badhai Ho! 🎉', textAlign: CenterTextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Badhai Ho! 🎉', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -416,7 +412,7 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context); // Go back to dashboard updated
+              Navigator.pop(context); 
             },
             child: const Text('OK', style: TextStyle(fontSize: 16, color: Colors.purple, fontWeight: FontWeight.bold)),
           ),
@@ -444,15 +440,12 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
               ),
               const SizedBox(height: 30),
 
-              // Animated Wheel Design
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Indicator Arrow
                   Positioned(
                     top: 0,
                     child: Container(
-                      zIndex: 10,
                       child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red),
                     ),
                   ),
@@ -479,7 +472,6 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
                       ),
                     ),
                   ),
-                  // Premium Center Pin
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: Container(
@@ -495,4 +487,19 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
                   ),
                 ],
               ),
-              const SizedBox(height: 
+              const SizedBox(height: 50),
+
+              GestureDetector(
+                onTap: _spinWheel,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _isSpinning 
+                          ? [Colors.grey, Colors.grey.shade400] 
+                          : [const Color(0xFF9C27B0), const Color(0xFFFF5252)],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF9C27B0).withOpacity
