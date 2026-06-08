@@ -17,30 +17,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Force Install Clean Flutter SDK
+      - name: Set up Flutter (Older Match)
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # Hum yahan string explicit bypass dene ke liye 'any' cache ko disable kar rahe hain
-          flutter-version: '3.24.1'
-          cache: false
-
-      - name: Clear Global and Pub Cache
-        run: |
-          flutter config --no-analytics
-          if [ -d "play_app" ]; then
-            cd play_app
-          fi
-          # System ko bolenge purana sub metadata delete kare
-          rm -rf .dart_tool
-          rm -f pubspec.lock
+          # Hum yahan exact purana version de rahe hain jisme Dart 3.12.x milega
+          flutter-version: '3.13.9'
 
       - name: Install Dependencies
         run: |
           if [ -d "play_app" ]; then
             cd play_app
           fi
-          # Forced resolution bina local locks check kiye
           flutter pub get
 
       - name: Build APK Release
@@ -57,5 +45,4 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             play_app/build/app/outputs/flutter-apk/app-release.apk
-
 
