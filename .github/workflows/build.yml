@@ -1,14 +1,19 @@
-name: Build Play4Earnn APK
+name: Generate and Build Play4Earnn App
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  setup-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -21,11 +26,24 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create Fresh Flutter App
+      - name: Create App Code Inside Repository
         run: |
-          flutter create --org com.play4earnn play_app
+          # Agar play_app pehle se nahi hai, toh hi banaye
+          if [ ! -d "play_app" ]; then
+            flutter create --org com.play4earnn play_app
+          fi
+          
+          # Firebase JSON setting
           mkdir -p play_app/android/app
           echo '${{ secrets.FIREBASE_JSON }}' > play_app/android/app/google-services.json
+
+      - name: Commit and Push Code to GitHub
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Add fresh flutter app structure"
+          git push origin main
 
       - name: Get Dependencies
         run: |
@@ -42,3 +60,5 @@ jobs:
         with:
           name: play4earnn-app-release
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
+
+
