@@ -31,7 +31,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
-  int _coins = 1842; // Coins ko yahan global banaya taaki saari screens access kar sakein
+  int _coins = 1842; 
 
   void _addCoins(int amount) {
     setState(() {
@@ -41,12 +41,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Saari screens ki list ko yahan dynamic banaya taaki coins ka real data dikhe
     final List<Widget> _screens = [
       DashboardScreen(coins: _coins, onCoinsUpdated: _addCoins), 
       const Center(child: Text('Tasks Screen 📝', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), 
       const Center(child: Text('Earn Screen 💎', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), 
-      WalletScreen(coins: _coins), // Ab humara asli Wallet Screen load hoga!
+      WalletScreen(coins: _coins), 
       const Center(child: Text('Profile Screen 👤', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), 
     ];
 
@@ -296,7 +295,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-// ================= NAYI WALLET SCREEN CLASS =================
 class WalletScreen extends StatelessWidget {
   final int coins;
   const WalletScreen({super.key, required this.coins});
@@ -317,7 +315,6 @@ class WalletScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Balance Card
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -326,5 +323,180 @@ class WalletScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
               ),
-              child
-              
+              child: Column(
+                children: [
+                  const Text('Available Balance', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.monetization_on, color: Colors.amber, size: 32),
+                      const SizedBox(width: 8),
+                      Text('$coins', style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text('Equivalent to ≈ ₹${rupees.toStringAsFixed(2)}', style: TextStyle(color: Colors.green.shade700, fontSize: 16, fontWeight: FontWeight.w500)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text('Withdrawal Options', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            const SizedBox(height: 12),
+
+            _buildWithdrawCard(
+              context,
+              title: 'Paytm Wallet',
+              subtitle: 'Instant transfer to your Paytm wallet',
+              iconImage: Icons.account_balance_wallet,
+              color: const Color(0xFF00B9F5),
+              minCoins: 1000,
+              amountText: '₹10',
+            ),
+            const SizedBox(height: 12),
+
+            _buildWithdrawCard(
+              context,
+              title: 'UPI Transfer',
+              subtitle: 'Transfer directly via BHIM UPI ID',
+              iconImage: Icons.vignette_sharp,
+              color: const Color(0xFF5E249F),
+              minCoins: 5000,
+              amountText: '₹50',
+            ),
+            const SizedBox(height: 12),
+
+            _buildWithdrawCard(
+              context,
+              title: 'Google Play Redeem Code',
+              subtitle: 'Get instant Play Store redeem code',
+              iconImage: Icons.shop_two,
+              color: const Color(0xFF34A853),
+              minCoins: 2500,
+              amountText: '₹25',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWithdrawCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData iconImage,
+    required Color color,
+    required int minCoins,
+    required String amountText,
+  }) {
+    bool isEligible = coins >= minCoins;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2))],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(15)),
+            child: Icon(iconImage, color: color, size: 30),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 2),
+                Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                const SizedBox(height: 6),
+                Text('Requires $minCoins coins ($amountText)', style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: isEligible 
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('$title withdrawal request submitted!')),
+                    );
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor: Colors.grey.shade200,
+              disabledForegroundColor: Colors.grey,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            ),
+            child: const Text('Redeem', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomSpinWheelScreen extends StatefulWidget {
+  final Function(int) onCoinsWon;
+  const CustomSpinWheelScreen({super.key, required this.onCoinsWon});
+
+  @override
+  State<CustomSpinWheelScreen> createState() => _CustomSpinWheelScreenState();
+}
+
+class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isSpinning = false;
+  int _wonValue = 0;
+  final List<int> _wheelValues = [2, 10, 5, 30, 1, 8, 3, 20];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 4));
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _spinWheel() {
+    if (_isSpinning) return;
+    setState(() => _isSpinning = true);
+    int luckyRoll = Random().nextInt(100);
+    int targetedIndex = luckyRoll < 30 ? 0 : luckyRoll < 55 ? 2 : luckyRoll < 75 ? 4 : luckyRoll < 90 ? 6 : luckyRoll < 96 ? 1 : luckyRoll < 99 ? 7 : 3;
+    _wonValue = _wheelValues[targetedIndex];
+    double sectorAngle = (2 * pi) / _wheelValues.length;
+    double targetAngle = (2 * pi * 4) + (sectorAngle * targetedIndex);
+    _animation = Tween<double>(begin: 0, end: targetAngle).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _controller.forward(from: 0).then((_) {
+      widget.onCoinsWon(_wonValue);
+      _showRewardDialog(_wonValue);
+      setState(() => _isSpinning = false);
+    });
+  }
+
+  void _showRewardDialog(int coins) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Badhai Ho! 🎉', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.monetization_on, color: Colors.amber, size: 60),
+            const SizedBox(height: 12),
+            Text('Aapne jeete hain $coins Coins!', style: const
