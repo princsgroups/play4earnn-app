@@ -312,7 +312,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-// Fixed Custom Spin Wheel Screen
 class CustomSpinWheelScreen extends StatefulWidget {
   final Function(int) onCoinsWon;
   const CustomSpinWheelScreen({super.key, required this.onCoinsWon});
@@ -443,12 +442,7 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  Positioned(
-                    top: 0,
-                    child: Container(
-                      child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red),
-                    ),
-                  ),
+                  // Sahi Stack Order: Indicator background ke upar automatic layer ho jayega bina zIndex ke
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: AnimatedBuilder(
@@ -471,6 +465,10 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
                         ),
                       ),
                     ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0),
@@ -502,4 +500,4 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF9C27B0).withOpacity
+                        color: const Color(0xFF9C27B0)
