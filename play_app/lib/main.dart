@@ -14,7 +14,7 @@ class Play4EarnnApp extends StatelessWidget {
       title: 'Play4Earnn',
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF8F9FD), // Light premium background
+        scaffoldBackgroundColor: const Color(0xFFF8F9FD),
       ),
       home: const DashboardScreen(),
     );
@@ -35,7 +35,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Rupee conversion placeholder (100 coins = 1 Rupee)
     double rupees = _coins / 100;
 
     return Scaffold(
@@ -45,7 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section: Welcome & Notification
+              // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -71,7 +70,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 1. Purple Gradient Balance Card
+              // Balance Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -138,7 +137,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 2. Daily Check-in Card (Hinglish text as in screenshot)
+              // Daily Check-in Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -170,7 +169,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Section Title: Ways to Earn
+              // Ways to Earn Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -180,7 +179,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 12),
 
-              // 3. Grid View for 4 Main Actions
+              // Grid View
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -199,7 +198,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 16),
 
-              // 4. Horizontal Leaderboard Card
+              // Leaderboard Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -221,7 +220,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           Text('Leaderboard', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                           SizedBox(height: 2),
-                          Text('See top earners and your rank', style: TextStyle(fontSize: 12, color: Colors.whiteBF)),
+                          Text('See top earners and your rank', style: TextStyle(fontSize: 12, color: Colors.white70)),
                         ],
                       ),
                     ),
@@ -234,7 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
 
-      // 5. Styled Bottom Navigation Bar matching the image
+      // Bottom Navigation Bar
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -265,7 +264,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Helper widget to build the gradient grid buttons
   Widget _buildGridCard(String title, String subtitle, IconData icon, List<Color> colors, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -297,9 +295,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-}
-
-// Custom Extension to get a lighter text color for the sub-banners easily
-extension on TextStyle {
-  Color get whiteBF => const Color(0xFFE0E0E0);
 }
