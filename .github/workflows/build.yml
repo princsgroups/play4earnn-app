@@ -17,32 +17,28 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Exact Flutter
+      - name: Set up Flutter (Official Version)
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.22.2'
+          flutter-version: '3.24.1'
+          cache: false
 
       - name: Install Dependencies
+        # Hum direct play_app folder ke andar ghus kar hi command chalayenge
+        working-directory: play_app
         run: |
-          if [ -d "play_app" ]; then
-            cd play_app
-          fi
+          flutter pub cache clean --force
           flutter pub get
 
       - name: Build APK Release
+        working-directory: play_app
         run: |
-          if [ -d "play_app" ]; then
-            cd play_app
-          fi
           flutter build apk --release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            play_app/build/app/outputs/flutter-apk/app-release.apk
-
+          path: play_app/build/app/outputs/flutter-apk/app-release.apk
 
