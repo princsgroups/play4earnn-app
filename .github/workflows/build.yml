@@ -17,22 +17,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          # Is baar hum target version ko exact string de rahe hain bina kisi miss ke
-          flutter-version: 3.24.1
-
-      - name: Clean Flutter Cache
+      - name: Download and Set up Exact Flutter 3.24.1
         run: |
-          if [ -d "play_app" ]; then
-            cd play_app
-          fi
-          flutter clean
+          cd $HOME
+          wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.1-stable.tar.xz
+          tar -xf flutter_linux_3.24.1-stable.tar.xz
+          echo "$HOME/flutter/bin" >> $GITHUB_PATH
+          echo "$HOME/flutter/bin/cache/dart-sdk/bin" >> $GITHUB_PATH
+
+      - name: Verify Flutter Version
+        run: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter --version
 
       - name: Install Dependencies
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           if [ -d "play_app" ]; then
             cd play_app
           fi
@@ -40,6 +40,7 @@ jobs:
 
       - name: Build APK Release
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           if [ -d "play_app" ]; then
             cd play_app
           fi
