@@ -12,38 +12,17 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Java
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Create App Code Inside Repository
-        run: |
-          # Agar play_app pehle se nahi hai, toh hi banaye
-          if [ ! -d "play_app" ]; then
-            flutter create --org com.play4earnn play_app
-          fi
-          
-          # Firebase JSON setting
-          mkdir -p play_app/android/app
-          echo '${{ secrets.FIREBASE_JSON }}' > play_app/android/app/google-services.json
-
-      - name: Commit and Push Code to GitHub
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff-index --quiet HEAD || git commit -m "Add fresh flutter app structure"
-          git push origin main
 
       - name: Get Dependencies
         run: |
@@ -55,10 +34,10 @@ jobs:
           cd play_app
           flutter build apk --release
 
+       Tarviji Artifacts me save karna
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: play4earnn-app-release
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
-
-
+          
