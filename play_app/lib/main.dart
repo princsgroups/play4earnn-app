@@ -22,7 +22,6 @@ class Play4EarnnApp extends StatelessWidget {
   }
 }
 
-// Yeh nayi screen sabhi screens ko manage karegi aur bottom bar ke hisab se screen badlegi
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
@@ -32,20 +31,26 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
+  int _coins = 1842; // Coins ko yahan global banaya taaki saari screens access kar sakein
 
-  // Saari screens ki list jo bottom bar se khulengi
-  final List<Widget> _screens = [
-    const DashboardScreen(), // Home Screen
-    const Center(child: Text('Tasks Screen 📝', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Tasks Placeholder
-    const Center(child: Text('Earn Screen 💎', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Earn Placeholder
-    const Center(child: Text('Wallet Screen 💳', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Wallet Placeholder
-    const Center(child: Text('Profile Screen 👤', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Profile Placeholder
-  ];
+  void _addCoins(int amount) {
+    setState(() {
+      _coins += amount;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Saari screens ki list ko yahan dynamic banaya taaki coins ka real data dikhe
+    final List<Widget> _screens = [
+      DashboardScreen(coins: _coins, onCoinsUpdated: _addCoins), 
+      const Center(child: Text('Tasks Screen 📝', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), 
+      const Center(child: Text('Earn Screen 💎', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), 
+      WalletScreen(coins: _coins), // Ab humara asli Wallet Screen load hoga!
+      const Center(child: Text('Profile Screen 👤', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), 
+    ];
+
     return Scaffold(
-      // Yahan humne body ko _selectedIndex se jod diya, ab screen badlegi!
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(12),
@@ -78,19 +83,20 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 }
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final int coins;
+  final Function(int) onCoinsUpdated;
+  const DashboardScreen({super.key, required this.coins, required this.onCoinsUpdated});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _coins = 1842;
   final int _lifetimeCoins = 3692;
 
   @override
   Widget build(BuildContext context) {
-    double rupees = _coins / 100;
+    double rupees = widget.coins / 100;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -153,7 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '$_coins',
+                            '${widget.coins}',
                             style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, height: 1),
                           ),
                           Text(
@@ -241,9 +247,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     MaterialPageRoute(
                       builder: (context) => CustomSpinWheelScreen(
                         onCoinsWon: (wonCoins) {
-                          setState(() {
-                            _coins += wonCoins;
-                          });
+                          widget.onCoinsUpdated(wonCoins);
                         },
                       ),
                     ),
@@ -292,159 +296,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class CustomSpinWheelScreen extends StatefulWidget {
-  final Function(int) onCoinsWon;
-  const CustomSpinWheelScreen({super.key, required this.onCoinsWon});
-
-  @override
-  State<CustomSpinWheelScreen> createState() => _CustomSpinWheelScreenState();
-}
-
-class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  bool _isSpinning = false;
-  int _wonValue = 0;
-  final List<int> _wheelValues = [2, 10, 5, 30, 1, 8, 3, 20];
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 4));
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _spinWheel() {
-    if (_isSpinning) return;
-    setState(() => _isSpinning = true);
-    int luckyRoll = Random().nextInt(100);
-    int targetedIndex = luckyRoll < 30 ? 0 : luckyRoll < 55 ? 2 : luckyRoll < 75 ? 4 : luckyRoll < 90 ? 6 : luckyRoll < 96 ? 1 : luckyRoll < 99 ? 7 : 3;
-    _wonValue = _wheelValues[targetedIndex];
-    double sectorAngle = (2 * pi) / _wheelValues.length;
-    double targetAngle = (2 * pi * 4) + (sectorAngle * targetedIndex);
-    _animation = Tween<double>(begin: 0, end: targetAngle).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
-    _controller.forward(from: 0).then((_) {
-      widget.onCoinsWon(_wonValue);
-      _showRewardDialog(_wonValue);
-      setState(() => _isSpinning = false);
-    });
-  }
-
-  void _showRewardDialog(int coins) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Badhai Ho! 🎉', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.monetization_on, color: Colors.amber, size: 60),
-            const SizedBox(height: 12),
-            Text('Aapne jeete hain $coins Coins!', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('OK', style: TextStyle(fontSize: 16, color: Colors.purple, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
+// ================= NAYI WALLET SCREEN CLASS =================
+class WalletScreen extends StatelessWidget {
+  final int coins;
+  const WalletScreen({super.key, required this.coins});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Lucky Spin Wheel', style: TextStyle(fontWeight: FontWeight.bold)), centerTitle: true),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Apna Luck Azmaiye! 🎡', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8), child: Text('1 se 30 tak coins milenge, chalo ghumao!', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
-              const SizedBox(height: 30),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
-                    child: AnimatedBuilder(
-                      animation: _animation,
-                      builder: (context, child) => Transform.rotate(angle: _animation.value, child: child),
-                      child: Container(
-                        width: 280,
-                        height: 280,
-                        decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)]),
-                        child: CustomPaint(painter: WheelPainter(_wheelValues)),
-                      ),
-                    ),
-                  ),
-                  Positioned(top: 0, child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red)),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
-                    child: Container(
-                      width: 45,
-                      height: 45,
-                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)]),
-                      child: const Icon(Icons.star, color: Colors.amber, size: 26),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50),
-              GestureDetector(
-                onTap: _spinWheel,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: _isSpinning ? [Colors.grey, Colors.grey.shade400] : [const Color(0xFF9C27B0), const Color(0xFFFF5252)]),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [BoxShadow(color: const Color(0xFF9C27B0), blurRadius: 10, offset: const Offset(0, 4))],
-                  ),
-                  child: const Center(child: Text('SPIN', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+    double rupees = coins / 100;
 
-class WheelPainter extends CustomPainter {
-  final List<int> values;
-  WheelPainter(this.values);
-  @override
-  void paint(Canvas canvas, Size size) {
-    double center = size.width / 2;
-    double radius = center;
-    Paint paint = Paint()..style = PaintingStyle.fill;
-    double angle = (2 * pi) / values.length;
-    for (int i = 0; i < values.length; i++) {
-      paint.color = (i % 2 == 0) ? const Color(0xFF9C27B0) : const Color(0xFFFF5252);
-      canvas.drawArc(Rect.fromCircle(center: Offset(center, center), radius: radius), i * angle, angle, true, paint);
-      TextPainter textPainter = TextPainter(text: TextSpan(text: values[i].toString(), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)), textDirection: TextDirection.ltr);
-      textPainter.layout();
-      double textAngle = i * angle + angle / 2;
-      double x = center + (radius / 1.5) * cos(textAngle);
-      double y = center + (radius / 1.5) * sin(textAngle);
-      textPainter.paint(canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
-    }
-  }
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Wallet 💳', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Balance Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+              ),
+              child
+              
