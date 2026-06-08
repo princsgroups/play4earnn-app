@@ -145,7 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Welcome Back!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SExpanded(height: 8, child: SizedBox()), // fixed sizing spacing spacer
+                SizedBox(height: 8),
                 Text('Complete tasks below to withdraw real cash.', style: TextStyle(color: Colors.white70)),
               ],
             ),
@@ -176,3 +176,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+
