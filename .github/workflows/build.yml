@@ -17,34 +17,34 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Download and Set up Exact Flutter 3.24.1
-        run: |
-          cd $HOME
-          wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.1-stable.tar.xz
-          tar -xf flutter_linux_3.24.1-stable.tar.xz
-          echo "$HOME/flutter/bin" >> $GITHUB_PATH
-          echo "$HOME/flutter/bin/cache/dart-sdk/bin" >> $GITHUB_PATH
+      - name: Set up Flutter Official
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          # Agar version dikkat de raha hai, toh hum latest stable use karenge jo sabhi packages ko support karega
+          flutter-version: '3.24.1'
 
-      - name: Verify Flutter Version
+      - name: Verify Flutter Info
         run: |
-          export PATH="$HOME/flutter/bin:$PATH"
           flutter --version
+          dart --version
 
-      - name: Install Dependencies
+      - name: Install Dependencies (Force Fix)
         run: |
-          export PATH="$HOME/flutter/bin:$PATH"
           if [ -d "play_app" ]; then
             cd play_app
           fi
-          flutter pub get
+          # Purani kisi bhi local configuration ko bypass karne ke liye
+          flutter pub cache clean --force
+          flutter pub get --no-example
 
       - name: Build APK Release
         run: |
-          export PATH="$HOME/flutter/bin:$PATH"
           if [ -d "play_app" ]; then
             cd play_app
           fi
-          flutter build apk --release
+          flutter build apk --release --no-pub
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -53,3 +53,4 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             play_app/build/app/outputs/flutter-apk/app-release.apk
+
