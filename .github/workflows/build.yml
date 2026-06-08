@@ -24,15 +24,24 @@ jobs:
           channel: 'stable'
 
       - name: Install Dependencies
-        run: flutter pub get
+        run: |
+          if [ -d "play_app" ]; then
+            cd play_app
+          fi
+          flutter pub get
 
       - name: Build APK Release
-        run: flutter build apk --release
+        run: |
+          if [ -d "play_app" ]; then
+            cd play_app
+          fi
+          flutter build apk --release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            play_app/build/app/outputs/flutter-apk/app-release.apk
+            
