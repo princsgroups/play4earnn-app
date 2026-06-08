@@ -3,48 +3,45 @@ name: Flutter APK Build
 on:
   workflow_dispatch:
 
-# GitHub ke naye platform updates ko support karne ke liye settings
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. Latest Node 24 compatible Checkout standard
+      # 1. Repository ka code fetch karna
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Latest Java Setup plugin (Temurin distribution ke sath)
-      - name: Set up Java 17
+      #  Android build ke liye sabse safe aur compatible Java version
+      - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '11'
 
-      # 3. Stable Flutter Action framework
+      # 3. Flutter SDK ka stable setup
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      # 4. Project ki saari dependencies fetch karna
+      # 4. Auto-detect path aur Pub Get chalana (play_app folder ho ya na ho, dono me chalega)
       - name: Install Dependencies
         run: |
-          cd play_app
+          if [ -d "play_app" ]; then cd play_app; fi
           flutter pub get
 
-      # 5. Production Release APK compile karna
+      # 5. Production Release APK build karna (Bina path ke jhanjhat ke)
       - name: Build APK Release
         run: |
-          cd play_app
+          if [ -d "play_app" ]; then cd play_app; fi
           flutter build apk --release
 
-      # 6. Final APK ko download ke liye ready karna
+      # 6. APK file ko nikal kar artifacts me daalna
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: play_app/build/app/outputs/flutter-apk/app-release.apk
-          
+          path: |
+            **/build/app/outputs/flutter-apk/app-release.apk
+
