@@ -13,15 +13,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
+      # Pubspec.yaml ke mutabik exact Flutter version lock kiya
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.12.1'
           channel: 'stable'
 
       - name: Get Dependencies
@@ -29,7 +31,7 @@ jobs:
           cd play_app
           flutter pub get
 
-      - name: Build APK
+      - name: Build APK Release
         run: |
           cd play_app
           flutter build apk --release
