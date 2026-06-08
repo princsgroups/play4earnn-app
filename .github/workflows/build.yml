@@ -17,18 +17,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Latest Flutter
+      - name: Set up Exact Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Bypass SDK Version Constraint
-        run: |
-          if [ -d "play_app" ]; then
-            cd play_app
-          fi
-          # Yeh command pubspec.yaml ke andar environment sdk ki strict range ko badal dega
-          sed -i 's/sdk: .*/sdk: ">=3.0.0 <4.0.0"/' pubspec.yaml
+          flutter-version: '3.22.2'
 
       - name: Install Dependencies
         run: |
@@ -51,4 +44,5 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             play_app/build/app/outputs/flutter-apk/app-release.apk
+
 
