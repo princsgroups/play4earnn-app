@@ -7,41 +7,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. Repository ka code fetch karna
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      #  Android build ke liye sabse safe aur compatible Java version
-      - name: Set up Java 11
+      # Yahan humne 11 ko 17 kar diya hai
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
-      # 3. Flutter SDK ka stable setup
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      # 4. Auto-detect path aur Pub Get chalana (play_app folder ho ya na ho, dono me chalega)
       - name: Install Dependencies
         run: |
           if [ -d "play_app" ]; then cd play_app; fi
           flutter pub get
 
-      # 5. Production Release APK build karna (Bina path ke jhanjhat ke)
       - name: Build APK Release
         run: |
           if [ -d "play_app" ]; then cd play_app; fi
           flutter build apk --release
 
-      # 6. APK file ko nikal kar artifacts me daalna
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: |
             **/build/app/outputs/flutter-apk/app-release.apk
-
+            
