@@ -313,7 +313,7 @@ class WalletScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: Cross CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
@@ -499,4 +499,4 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
           children: [
             const Icon(Icons.monetization_on, color: Colors.amber, size: 60),
             const SizedBox(height: 12),
-            Text('Aapne jeete hain $coins Coins!', style:
+            Text('Aapne jeete hain $coins Coins!', style: const
