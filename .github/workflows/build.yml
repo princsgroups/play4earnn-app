@@ -1,13 +1,7 @@
 name: Flutter APK Build
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,16 +14,22 @@ jobs:
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'  # ya latest stable
+          channel: 'stable'
+          # Is baar hum target version ko exact string de rahe hain bina kisi miss ke
+          flutter-version: 3.24.1
 
-      - name: Flutter Doctor
-        run: flutter doctor
+      - name: Clean Flutter Cache
+        run: |
+          if [ -d "play_app" ]; then
+            cd play_app
+          fi
+          flutter clean
 
       - name: Install Dependencies
         run: |
@@ -45,7 +45,7 @@ jobs:
           fi
           flutter build apk --release
 
-      - name: Upload APK
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
