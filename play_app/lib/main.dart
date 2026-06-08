@@ -17,193 +17,36 @@ class Play4EarnnApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFFF8F9FD),
       ),
-      home: const DashboardScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+// Yeh nayi screen sabhi screens ko manage karegi aur bottom bar ke hisab se screen badlegi
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
-  int _coins = 1842;
-  final int _lifetimeCoins = 3692;
+
+  // Saari screens ki list jo bottom bar se khulengi
+  final List<Widget> _screens = [
+    const DashboardScreen(), // Home Screen
+    const Center(child: Text('Tasks Screen 📝', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Tasks Placeholder
+    const Center(child: Text('Earn Screen 💎', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Earn Placeholder
+    const Center(child: Text('Wallet Screen 💳', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Wallet Placeholder
+    const Center(child: Text('Profile Screen 👤', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))), // Profile Placeholder
+  ];
 
   @override
   Widget build(BuildContext context) {
-    double rupees = _coins / 100;
-
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Welcome back 👋', style: TextStyle(color: Colors.grey, fontSize: 14)),
-                      Text('Hi, Task', style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.notifications_none, color: Colors.black),
-                      onPressed: () {},
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(color: const Color(0xFF6A11CB).withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('YOUR BALANCE', style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(color: Color(0xFFFFC107), shape: BoxShape.circle),
-                          child: const Icon(Icons.monetization_on, color: Colors.white, size: 28),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '$_coins',
-                              style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, height: 1),
-                            ),
-                            Text(
-                              'coins ≈ ₹${rupees.toStringAsFixed(2)}',
-                              style: const TextStyle(color: Colors.white70, fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.trending_up, color: Colors.white, size: 16),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Lifetime earned: $_lifetimeCoins coins',
-                            style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: const Color(0xFFFFB300).withOpacity(0.15), shape: BoxShape.circle),
-                      child: const Icon(Icons.card_giftcard, color: Color(0xFFFFB300), size: 28),
-                    ),
-                    const SizedBox(width: 14),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Daily Check-in', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-                          SizedBox(height: 2),
-                          Text('Streak badhao · Day 7 par 5x reward', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.check_circle, color: Colors.green, size: 24),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Ways to earn', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-                  TextButton(onPressed: () {}, child: const Text('See all', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold))),
-                ],
-              ),
-              const SizedBox(height: 12),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                childAspectRatio: 1.2,
-                children: [
-                  _buildGridCard('Watch & Earn', 'Up to 50 coins / video', Icons.play_circle_fill, const [Color(0xFFE040FB), Color(0xFF00BCD4)], () {}),
-                  _buildGridCard('Play Quiz', '5 coins per correct', Icons.psychology, const [Color(0xFFFFB300), Color(0xFFFF6D00)], () {}),
-                  _buildGridCard('Spin Wheel', 'Win 1 to 30 coins', Icons.incomplete_circle, const [Color(0xFF9C27B0), Color(0xFFFF5252)], () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CustomSpinWheelScreen(
-                          onCoinsWon: (wonCoins) {
-                            setState(() {
-                              _coins += wonCoins;
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                  _buildGridCard('Refer & Earn', '500 coins per friend', Icons.people, const [Color(0xFFFFB300), Color(0xFFFFAB40)], () {}),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
-      ),
+      // Yahan humne body ko _selectedIndex se jod diya, ab screen badlegi!
+      body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -228,6 +71,189 @@ class _DashboardScreenState extends State<DashboardScreen> {
               BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  int _coins = 1842;
+  final int _lifetimeCoins = 3692;
+
+  @override
+  Widget build(BuildContext context) {
+    double rupees = _coins / 100;
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Welcome back 👋', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                    Text('Hi, Task', style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.notifications_none, color: Colors.black),
+                    onPressed: () {},
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(color: const Color(0xFF6A11CB).withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('YOUR BALANCE', style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(color: Color(0xFFFFC107), shape: BoxShape.circle),
+                        child: const Icon(Icons.monetization_on, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$_coins',
+                            style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, height: 1),
+                          ),
+                          Text(
+                            'coins ≈ ₹${rupees.toStringAsFixed(2)}',
+                            style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.trending_up, color: Colors.white, size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Lifetime earned: $_lifetimeCoins coins',
+                          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: const Color(0xFFFFB300).withOpacity(0.15), shape: BoxShape.circle),
+                    child: const Icon(Icons.card_giftcard, color: Color(0xFFFFB300), size: 28),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Daily Check-in', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                        SizedBox(height: 2),
+                        Text('Streak badhao · Day 7 par 5x reward', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.check_circle, color: Colors.green, size: 24),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Ways to earn', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                TextButton(onPressed: () {}, child: const Text('See all', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold))),
+              ],
+            ),
+            const SizedBox(height: 12),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+              childAspectRatio: 1.2,
+              children: [
+                _buildGridCard('Watch & Earn', 'Up to 50 coins / video', Icons.play_circle_fill, const [Color(0xFFE040FB), Color(0xFF00BCD4)], () {}),
+                _buildGridCard('Play Quiz', '5 coins per correct', Icons.psychology, const [Color(0xFFFFB300), Color(0xFFFF6D00)], () {}),
+                _buildGridCard('Spin Wheel', 'Win 1 to 30 coins', Icons.incomplete_circle, const [Color(0xFF9C27B0), Color(0xFFFF5252)], () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CustomSpinWheelScreen(
+                        onCoinsWon: (wonCoins) {
+                          setState(() {
+                            _coins += wonCoins;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                }),
+                _buildGridCard('Refer & Earn', '500 coins per friend', Icons.people, const [Color(0xFFFFB300), Color(0xFFFFAB40)], () {}),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
