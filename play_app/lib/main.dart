@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,7 +31,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-  int _coins = 1692;
+  int _coins = 1842; // Aapke current coins ke mutabik set kiya hai
   final int _lifetimeCoins = 3692;
 
   @override
@@ -44,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
+              // Header Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -179,7 +180,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Grid View
+              // 4 Earning Grids
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -188,11 +189,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 mainAxisSpacing: 14,
                 childAspectRatio: 1.2,
                 children: [
-                  _buildGridCard('Watch & Earn', 'Up to 50 coins / video', Icons.play_circle_fill, const [Color(0xFFE040FB), Color(0xFF00BCD4)], () {
-                    setState(() => _coins += 50);
-                  }),
+                  _buildGridCard('Watch & Earn', 'Up to 50 coins / video', Icons.play_circle_fill, const [Color(0xFFE040FB), Color(0xFF00BCD4)], () {}),
                   _buildGridCard('Play Quiz', '5 coins per correct', Icons.psychology, const [Color(0xFFFFB300), Color(0xFFFF6D00)], () {}),
-                  _buildGridCard('Spin Wheel', 'Win up to 200 coins', Icons.incomplete_circle, const [Color(0xFF9C27B0), Color(0xFFFF5252)], () {}),
+                  
+                  // Spin Wheel Button Trigger
+                  _buildGridCard('Spin Wheel', 'Win 1 to 30 coins', Icons.incomplete_circle, const [Color(0xFF9C27B0), Color(0xFFFF5252)], () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomSpinWheelScreen(
+                          onCoinsWon: (wonCoins) {
+                            setState(() {
+                              _coins += wonCoins;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  }),
+                  
                   _buildGridCard('Refer & Earn', '500 coins per friend', Icons.people, const [Color(0xFFFFB300), Color(0xFFFFAB40)], () {}),
                 ],
               ),
@@ -296,3 +311,188 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+
+// Pure Custom Built-In Spin Wheel (No external packages needed!)
+class CustomSpinWheelScreen extends StatefulWidget {
+  final Function(int) onCoinsWon;
+  const CustomSpinWheelScreen({super.key, required this.onCoinsWon});
+
+  @override
+  State<CustomSpinWheelScreen> createState() => _CustomSpinWheelScreenState();
+}
+
+class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isSpinning = false;
+  int _wonValue = 0;
+
+  // Wheel values layout
+  final List<int> _wheelValues = [2, 10, 5, 30, 1, 8, 3, 20];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4), // 4 seconds smooth realistic rotation
+    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _spinWheel() {
+    if (_isSpinning) return;
+
+    setState(() {
+      _isSpinning = true;
+    });
+
+    // Smart Probability Engine:
+    // 1 se 30 tak value milegi lekin zyadatar 10 ke andar hi milegi!
+    int luckyRoll = Random().nextInt(100); 
+    int targetedIndex = 0;
+
+    if (luckyRoll < 30) {
+      targetedIndex = _wheelValues.indexOf(2);   // 30% chance for 2 coins
+    } else if (luckyRoll < 55) {
+      targetedIndex = _wheelValues.indexOf(3);   // 25% chance for 3 coins
+    } else if (luckyRoll < 75) {
+      targetedIndex = _wheelValues.indexOf(5);   // 20% chance for 5 coins
+    } else if (luckyRoll < 90) {
+      targetedIndex = _wheelValues.indexOf(1);   // 15% chance for 1 coin
+    } else if (luckyRoll < 96) {
+      targetedIndex = _wheelValues.indexOf(10);  // 6% chance for 10 coins
+    } else if (luckyRoll < 99) {
+      targetedIndex = _wheelValues.indexOf(20);  // 3% chance for 20 coins
+    } else {
+      targetedIndex = _wheelValues.indexOf(30);  // Only 1% chance for jackpot 30 coins!
+    }
+
+    _wonValue = _wheelValues[targetedIndex];
+
+    // Calculate rotation angle matching the sector index
+    double sectorAngle = (2 * pi) / _wheelValues.length;
+    double targetAngle = (2 * pi * 4) + (sectorAngle * targetedIndex);
+
+    _animation = Tween<double>(begin: 0, end: targetAngle).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+
+    _controller.forward(from: 0).then((_) {
+      widget.onCoinsWon(_wonValue);
+      _showRewardDialog(_wonValue);
+      setState(() {
+        _isSpinning = false;
+      });
+    });
+  }
+
+  void _showRewardDialog(int coins) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Badhai Ho! 🎉', textAlign: CenterTextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.monetization_on, color: Colors.amber, size: 60),
+            const SizedBox(height: 12),
+            Text(
+              'Aapne jeete hain $coins Coins!',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context); // Go back to dashboard updated
+            },
+            child: const Text('OK', style: TextStyle(fontSize: 16, color: Colors.purple, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Lucky Spin Wheel', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Apna Luck Azmaiye! 🎡', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                child: Text('1 se 30 tak coins milenge, chalo ghumao!', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
+              ),
+              const SizedBox(height: 30),
+
+              // Animated Wheel Design
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Indicator Arrow
+                  Positioned(
+                    top: 0,
+                    child: Container(
+                      zIndex: 10,
+                      child: const Icon(Icons.arrow_drop_down, size: 50, color: Colors.red),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: AnimatedBuilder(
+                      animation: _animation,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: _animation.value,
+                          child: child,
+                        );
+                      },
+                      child: Container(
+                        width: 280,
+                        height: 280,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)],
+                        ),
+                        child: CustomPaint(
+                          painter: WheelPainter(_wheelValues),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Premium Center Pin
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
+                      ),
+                      child: const Icon(Icons.star, color: Colors.amber, size: 26),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 
