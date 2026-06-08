@@ -7,33 +7,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1. Code Checkout
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2. Java 17 Setup (Ubuntu package manager se direct install)
       - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+          echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> $GITHUB_PATH
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+      # 3. Native Flutter SDK Download (Bina kisi plugin ke direct git clone)
+      - name: Install Flutter SDK
+        run: |
+          git clone https://github.com/flutter/flutter.git -b stable --depth 1 $HOME/flutter
+          echo "$HOME/flutter/bin" >> $GITHUB_PATH
 
+      # 4. Flutter Dependencies Pull Karna
       - name: Install Dependencies
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           cd play_app
           flutter pub get
 
-      - name: Build APK
+      # 5. Production APK Build
+      - name: Build APK Release
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           cd play_app
           flutter build apk --release
 
+      # 6. Generated APK Upload Karna
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
+
 
