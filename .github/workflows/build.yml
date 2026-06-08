@@ -41,4 +41,3 @@ jobs:
           name: play4earnn-app-release
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
 
-
