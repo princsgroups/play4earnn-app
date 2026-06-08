@@ -3,48 +3,46 @@ name: Generate and Build Play4Earnn App
 on:
   workflow_dispatch:
 
-# GitHub 2026 ke naye Node 24 standard ko force karne ke liye global environments
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-
-permissions:
-  contents: write
-  actions: write
-
 jobs:
   setup-and-build:
     runs-on: ubuntu-latest
     steps:
+      # 1. Repository Checkout bina purane version ke jhanjhat ke
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: .
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+      # 2. Java 17 sidhe apt se system par install (Bina setup-java plugin ke)
+      - name: Install Java 17
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.12.1'
-          channel: 'stable'
+      # 3. Flutter SDK ko bina kisi plugin ke sidhe download aur setup karna
+      - name: Install Flutter SDK
+        run: |
+          git clone https://github.com/flutter/flutter.git -b stable --depth 1 $HOME/flutter
+          echo "$HOME/flutter/bin" >> $GITHUB_PATH
 
+      # 4. Dependencies download karna
       - name: Get Dependencies
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           cd play_app
           flutter pub get
 
+      # 5. APK Release Build karna
       - name: Build APK Release
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           cd play_app
           flutter build apk --release
 
+      # 6. Artifact upload karna naye standard ke sath
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: play4earnn-app-release
           path: play_app/build/app/outputs/flutter-apk/app-release.apk
-          
+
+
