@@ -17,34 +17,38 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter Official
+      - name: Force Install Clean Flutter SDK
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          cache: true
-          # Agar version dikkat de raha hai, toh hum latest stable use karenge jo sabhi packages ko support karega
+          # Hum yahan string explicit bypass dene ke liye 'any' cache ko disable kar rahe hain
           flutter-version: '3.24.1'
+          cache: false
 
-      - name: Verify Flutter Info
+      - name: Clear Global and Pub Cache
         run: |
-          flutter --version
-          dart --version
+          flutter config --no-analytics
+          if [ -d "play_app" ]; then
+            cd play_app
+          fi
+          # System ko bolenge purana sub metadata delete kare
+          rm -rf .dart_tool
+          rm -f pubspec.lock
 
-      - name: Install Dependencies (Force Fix)
+      - name: Install Dependencies
         run: |
           if [ -d "play_app" ]; then
             cd play_app
           fi
-          # Purani kisi bhi local configuration ko bypass karne ke liye
-          flutter pub cache clean --force
-          flutter pub get --no-example
+          # Forced resolution bina local locks check kiye
+          flutter pub get
 
       - name: Build APK Release
         run: |
           if [ -d "play_app" ]; then
             cd play_app
           fi
-          flutter build apk --release --no-pub
+          flutter build apk --release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -53,4 +57,5 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             play_app/build/app/outputs/flutter-apk/app-release.apk
+
 
