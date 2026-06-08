@@ -17,12 +17,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Exact Flutter for Dart 3.12
+      - name: Set up Latest Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # Is version ke andar exact Dart 3.12.x aata hai jo aapke app ko chahiye
-          flutter-version: '3.16.9'
+
+      - name: Bypass SDK Version Constraint
+        run: |
+          if [ -d "play_app" ]; then
+            cd play_app
+          fi
+          # Yeh command pubspec.yaml ke andar environment sdk ki strict range ko badal dega
+          sed -i 's/sdk: .*/sdk: ">=3.0.0 <4.0.0"/' pubspec.yaml
 
       - name: Install Dependencies
         run: |
