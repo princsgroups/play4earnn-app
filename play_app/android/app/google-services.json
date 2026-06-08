@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "355884743607",
+    "project_id": "play4earnn",
+    "storage_bucket": "play4earnn.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:355884743607:android:6c914ac9eafa60adb80632",
+        "android_client_info": {
+          "package_name": "com.play4earnn.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "355884743607-erfrjjp52s4eejfjd82bulsuq9q9gr9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeVmDC0cALyXGs-VhSYoSe7SqeQ_GYkec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "355884743607-erfrjjp52s4eejfjd82bulsuq9q9gr9d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
