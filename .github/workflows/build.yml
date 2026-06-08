@@ -19,7 +19,6 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      # Pubspec.yaml ke mutabik exact Flutter version lock kiya
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
