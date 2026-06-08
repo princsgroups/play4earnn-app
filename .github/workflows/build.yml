@@ -17,12 +17,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter (Older Match)
+      - name: Set up Exact Flutter for Dart 3.12
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # Hum yahan exact purana version de rahe hain jisme Dart 3.12.x milega
-          flutter-version: '3.13.9'
+          # Is version ke andar exact Dart 3.12.x aata hai jo aapke app ko chahiye
+          flutter-version: '3.16.9'
 
       - name: Install Dependencies
         run: |
