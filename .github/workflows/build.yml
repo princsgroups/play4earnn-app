@@ -17,15 +17,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter (Official Version)
+      - name: Set up Latest Flutter Edge (Bypass Version Lock)
         uses: subosito/flutter-action@v2
         with:
+          # Hum exact stable tag hata kar automatic fresh latest system configure kar rahe hain
           channel: 'stable'
-          flutter-version: '3.24.1'
           cache: false
 
       - name: Install Dependencies
-        # Hum direct play_app folder ke andar ghus kar hi command chalayenge
         working-directory: play_app
         run: |
           flutter pub cache clean --force
