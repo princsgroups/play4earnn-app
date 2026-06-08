@@ -474,12 +474,16 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
   void _spinWheel() {
     if (_isSpinning) return;
     setState(() => _isSpinning = true);
+    
     int luckyRoll = Random().nextInt(100);
     int targetedIndex = luckyRoll < 30 ? 0 : luckyRoll < 55 ? 2 : luckyRoll < 75 ? 4 : luckyRoll < 90 ? 6 : luckyRoll < 96 ? 1 : luckyRoll < 99 ? 7 : 3;
     _wonValue = _wheelValues[targetedIndex];
+    
     double sectorAngle = (2 * pi) / _wheelValues.length;
     double targetAngle = (2 * pi * 4) + (sectorAngle * targetedIndex);
+    
     _animation = Tween<double>(begin: 0, end: targetAngle).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    
     _controller.forward(from: 0).then((_) {
       widget.onCoinsWon(_wonValue);
       _showRewardDialog(_wonValue);
@@ -499,4 +503,4 @@ class _CustomSpinWheelScreenState extends State<CustomSpinWheelScreen> with Sing
           children: [
             const Icon(Icons.monetization_on, color: Colors.amber, size: 60),
             const SizedBox(height: 12),
-            Text('Aapne jeete hain $coins Coins!', style: const
+            Text('Aapne jeete hain $coins C
