@@ -16,7 +16,7 @@ class Play4EarnnApp extends StatelessWidget {
         primaryColor: Colors.deepPurple,
         scaffoldBackgroundColor: const Color(0xFF121212),
       ),
-      home: const LoginScreen(), // Pehle Login Screen khulegi
+      home: const LoginScreen(),
     );
   }
 }
@@ -34,11 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   void _handleLogin() {
-    // Abhi ke liye simple bypass validation lagaya hai
     if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(const builder = (context) => const DashboardScreen()),
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -146,7 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Welcome Back!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
+                SExpanded(height: 8, child: SizedBox()), // fixed sizing spacing spacer
                 Text('Complete tasks below to withdraw real cash.', style: TextStyle(color: Colors.white70)),
               ],
             ),
@@ -177,5 +176,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-
-
