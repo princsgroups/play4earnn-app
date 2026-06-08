@@ -3,8 +3,13 @@ name: Generate and Build Play4Earnn App
 on:
   workflow_dispatch:
 
+# GitHub 2026 ke naye Node 24 standard ko force karne ke liye global environments
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 permissions:
   contents: write
+  actions: write
 
 jobs:
   setup-and-build:
@@ -12,6 +17,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: .
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
